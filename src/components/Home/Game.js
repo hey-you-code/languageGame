@@ -25,25 +25,29 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import { currentUsers, selectUser, setUsers } from "../../store/userSlice";
+import { questions } from "../../questions";
 
-const questions = [
-  {
-    question: "What part of speech do you know?",
-    optionA: "Noun",
-    optionB: "Verb",
-    optionC: "Adjective",
-    optionD: "Adverb",
-    answer: "A",
-  },
-  {
-    question: "How ?",
-    optionA: "A",
-    optionB: "B",
-    optionC: "C",
-    optionD: "D",
-    answer: "A",
-  },
-];
+// const questions = [
+//   {
+//     question: "What part of speech do you know?",
+//     optionA: "Noun",
+//     optionB: "Verb",
+//     optionC: "Adjective",
+//     optionD: "Adverb",
+//     answer: "A",
+//   },
+//   {
+//     question: "How ?",
+//     optionA: "A",
+//     optionB: "B",
+//     optionC: "C",
+//     optionD: "D",
+//     answer: "A",
+//   },
+// ];
+
+
+
 
 function Game() {
   const currentQuestion = useSelector(currQuestion);
@@ -58,20 +62,20 @@ function Game() {
 
   const [optionChoosen, setOptionChoosen] = useState("");
 
-  useEffect(
-    () =>
-      onSnapshot(
-        query(
-          collection(db, "languages", currGameLanguage, "users"),
-          orderBy("timestamp", "desc")
-        ),
-        (snapshot) => {
-          dispatch(setUsers(snapshot.docs));
-        }
-      ),
+  // useEffect(
+  //   () =>
+  //     onSnapshot(
+  //       query(
+  //         collection(db, "languages", currGameLanguage, "users"),
+  //         orderBy("timestamp", "desc")
+  //       ),
+  //       (snapshot) => {
+  //         dispatch(setUsers(snapshot.docs));
+  //       }
+  //     ),
 
-    [db]
-  );
+  //   [db]
+  // );
 
   // useEffect(
   //   () =>

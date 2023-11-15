@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   setCurrQuestion,
+  setGameLanguage,
   setGameState,
   setZeroScore,
 } from "../../store/gameSlice";
@@ -20,6 +21,7 @@ function NavBar() {
           dispatch(setCurrQuestion(0));
           dispatch(setZeroScore(0));
           dispatch(setGameState("learn"));
+          dispatch(setGameLanguage(null));
           navigate("/");
         }}
         className="cursor-pointer px-8"

@@ -1,5 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Select from "react-select";
+import Table from "../components/LeaderBoard/Table";
+import {
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
+import { db } from "../firebase";
+import { gameLanguage, gameLevel } from "../store/gameSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  leaderboardLanguage,
+  leaderboardLevel,
+  setLeaderboardLanguage,
+  setLeaderboardLevel,
+} from "../store/leaderboardSlice";
 
 const levels = [
   { value: "2", label: "Level-1" },
@@ -18,8 +36,55 @@ const languages = [
 ];
 
 function LeaderboardPage() {
-  const [level, setLevel] = useState(null);
-  const [language, setLanguage] = useState(null);
+  const currentLanguage = useSelector(leaderboardLanguage);
+
+  const currentLevel = useSelector(leaderboardLevel);
+  const [level, setLevel] = useState(currentLevel || null);
+  const [language, setLanguage] = useState(currentLanguage || null);
+  const [gameUsers, setGameUsers] = useState([]);
+  const [tableData, setTableData] = useState([]);
+  // const currentGameLevel = useSelector(gameLevel);
+  // const currGameLanguage = useSelector(gameLanguage);
+
+  const dispatch = useDispatch();
+
+  useEffect(
+    () =>
+      onSnapshot(collection(db, "users"), (snapshot) => {
+        setGameUsers(snapshot.docs);
+      }),
+    []
+  );
+
+  console.log(gameUsers);
+
+  const showLeaderBoard = async () => {
+    for (var i = 0; i < gameUsers.length; i++) {
+      const docRef = doc(
+        db,
+        "users",
+        gameUsers[i]?.data()?.uid,
+        language.label,
+        level.label
+      );
+      const docSnap = await getDoc(docRef);
+
+      if (
+        docSnap.exists() &&
+        tableData.findIndex((item) => item.uid === docSnap.data().uid) === -1
+      ) {
+        setTableData((item) => [...item, docSnap.data()]);
+        console.log("docSnap", docSnap.data());
+      } else {
+        console.log("doesnot exist");
+      }
+    }
+
+    dispatch(setLeaderboardLanguage(language.label));
+    dispatch(setLeaderboardLevel(level.label));
+  };
+
+  console.log("tableData", tableData);
 
   return (
     <div className="h-screen w-screen flex">
@@ -51,10 +116,17 @@ function LeaderboardPage() {
           </Select>
         </div>
         <div className="mt-4">
-            <button className="border-2 px-4 py-2 mt-4 rounded-xl border-black text-black font-semibold text-2xl">
+          <button
+            onClick={showLeaderBoard}
+            className="border-2 px-4 py-2 mt-4 rounded-xl border-black text-black font-semibold text-2xl"
+          >
             Show Leaderboard
-            </button>
+          </button>
         </div>
+      </div>
+      <div className="flex justify-center w-3/4">
+        {/* {tableData[0]?.email} */}
+        <Table tableData={tableData} />
       </div>
     </div>
   );

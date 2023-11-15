@@ -23,16 +23,16 @@ function SignUpPage({ setSignUp }) {
   //   });
 
   const signUp = async () => {
-    await createUserWithEmailAndPassword(auth, email, password).then(
-      async (currUser) => {
+    await createUserWithEmailAndPassword(auth, email, password)
+      .then(async (currUser) => {
         console.log(currUser.user);
         await setDoc(doc(db, "users", currUser?.user?.uid), {
           email: email,
           username: email.split("@")[0],
           uid: currUser?.user?.uid,
         });
-      }
-    );
+      })
+      .catch((err) => alert(err.message));
 
     navigate("/");
 

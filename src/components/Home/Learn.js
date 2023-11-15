@@ -20,6 +20,10 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import { currentUsers, selectUser, setUsers } from "../../store/userSlice";
+import {
+  leaderboardLanguage,
+  leaderboardLevel,
+} from "../../store/leaderboardSlice";
 
 const levels = [
   { value: "2", label: "Level-1" },
@@ -38,6 +42,7 @@ const options = [
 ];
 
 function Learn() {
+
   const [level, setLevel] = useState(null);
   const dispatch = useDispatch();
   const [exist, setExist] = useState(true);
@@ -94,14 +99,6 @@ function Learn() {
   // console.log(selectedOption);
 
   const setLanguage = () => {
-    // await addDoc(collection(db, "languages", selectedOption.label, "users"), {
-    //   email: user?.email,
-    //   uid: user?.uid,
-    //   language: selectedOption.label,
-    //   gameLevel: currentGameLevel,
-    //   timestamp: serverTimestamp(),
-    //   score: 0,
-    // });
     dispatch(setGameLanguage(selectedOption.label));
     setExist(true);
   };
