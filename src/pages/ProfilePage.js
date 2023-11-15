@@ -36,7 +36,7 @@ function ProfilePage() {
   const users = useSelector(currentUsers);
   const user = useSelector(selectUser);
   const [selectedOption, setSelectedOption] = useState(null);
-  const [exist, setExist] = useState(false);
+  const [exist, setExist] = useState(true);
 
   console.log(currGameLanguage);
 
@@ -62,7 +62,7 @@ function ProfilePage() {
     }
 
     // dispatch(logout());
-    // window.location.reload(false);
+    window.location.reload(false);
   };
   return (
     <div>
@@ -84,7 +84,7 @@ function ProfilePage() {
           </div>
           <div className="bg-black h-1 w-full"></div>
           <div className="mt-4 w-full h-screen">
-            {currGameLanguage != null && exist == true ? (
+            {exist == true ? (
               <div>
                 <h1 className="text-2xl font-semibold">Language Preference</h1>
                 <div className="space-x-4 flex justify-between">

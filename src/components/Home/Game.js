@@ -16,10 +16,12 @@ import { ChevronLeftIcon } from "@heroicons/react/24/solid";
 import {
   addDoc,
   collection,
+  doc,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import { currentUsers, selectUser, setUsers } from "../../store/userSlice";
@@ -60,7 +62,7 @@ function Game() {
     () =>
       onSnapshot(
         query(
-          collection(db, "languages", "English"),
+          collection(db, "languages", currGameLanguage, "users"),
           orderBy("timestamp", "desc")
         ),
         (snapshot) => {
@@ -96,25 +98,37 @@ function Game() {
     dispatch(setGameState("result"));
     dispatch(setCurrQuestion(0));
 
-    if (!userExist) {
-      await addDoc(collection(db, "users"), {
-        email: user?.email,
-        uid: user?.uid,
-        language: currGameLanguage,
-        gameLevel: currentGameLevel,
-        timestamp: serverTimestamp(),
-        score: gameScore,
-      });
-    }
+    await updateDoc(
+      doc(db, "users", user?.uid, currGameLanguage, currentGameLevel),
+      {
+        score:
+          questions[currentQuestion].answer == optionChoosen
+            ? gameScore + 1
+            : gameScore,
+      }
+    );
+
+    // if (!userExist) {
+    //   await addDoc(collection(db, "users"), {
+    //     email: user?.email,
+    //     uid: user?.uid,
+    //     language: currGameLanguage,
+    //     gameLevel: currentGameLevel,
+    //     timestamp: serverTimestamp(),
+    //     score: gameScore,
+    //   });
+    // }
   };
 
   console.log(optionChoosen);
   return (
     <div className="h-screen w-screen flex flex-col  items-center my-4 ">
-      {users.map((item) => (
-        <div>{item.id}</div>
-        
-      ))}
+      {/* {users.map((item) => (
+        <>
+          <div>{item?.id}</div>
+          <div>{item?.data()?.score}</div>
+        </>
+      ))} */}
       <ChevronLeftIcon
         onClick={() => {
           setOptionChoosen("");

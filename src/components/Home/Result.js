@@ -2,6 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   score,
+  setGameLanguage,
   setGameState,
   setScore,
   setZeroScore,
@@ -14,6 +15,7 @@ function Result() {
   const handleSubmit = () => {
     dispatch(setGameState("learn"));
     dispatch(setZeroScore(0));
+    dispatch(setGameLanguage(null));
   };
   return (
     <div>

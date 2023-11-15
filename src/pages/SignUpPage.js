@@ -1,31 +1,49 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { auth } from "../firebase";
+import { Link, useNavigate } from "react-router-dom";
+import { auth, db } from "../firebase";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
 } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, userState } from "../store/userSlice";
+import { doc, setDoc } from "firebase/firestore";
 
-function SignUpPage({setSignUp}) {
+function SignUpPage({ setSignUp }) {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-//   const user = useSelector(userState);
+  //   const user = useSelector(userState);
   const dispatch = useDispatch();
   //   const [validPassword, setValidPassword] = useState(false);
 
-//   onAuthStateChanged(auth, (currentUser) => {
-//     dispatch(setUser(currentUser));
-//   });
+  //   onAuthStateChanged(auth, (currentUser) => {
+  //     dispatch(setUser(currentUser));
+  //   });
 
   const signUp = async () => {
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-    } catch (err) {
-      alert(err.message);
-    }
+    await createUserWithEmailAndPassword(auth, email, password).then(
+      async (currUser) => {
+        console.log(currUser.user);
+        await setDoc(doc(db, "users", currUser?.user?.uid), {
+          email: email,
+          username: email.split("@")[0],
+          uid: currUser?.user?.uid,
+        });
+      }
+    );
+
+    navigate("/");
+
+    // await addDoc(collection(db, "users"), {
+    //   email: user?.email,
+    //   uid: user?.uid,
+    //   language: currGameLanguage,
+    //   gameLevel: level.label,
+    //   timestamp: serverTimestamp(),
+    //   score: 0,
+    // });
   };
 
   console.log(auth?.currentUser?.email);
@@ -86,7 +104,10 @@ function SignUpPage({setSignUp}) {
         </div>
         <div className="text-xl font-semibold">OR</div>
         <div className="w-screen flex justify-center">
-          <button onClick={() => setSignUp(false)} className="bg-black text-white p-2 rounded-md w-1/3 font-semibold ">
+          <button
+            onClick={() => setSignUp(false)}
+            className="bg-black text-white p-2 rounded-md w-1/3 font-semibold "
+          >
             Login
           </button>
         </div>
