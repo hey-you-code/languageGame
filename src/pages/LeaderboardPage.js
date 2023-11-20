@@ -59,6 +59,7 @@ function LeaderboardPage() {
   console.log(gameUsers);
 
   const showLeaderBoard = async () => {
+    setTableData([]);
     for (var i = 0; i < gameUsers.length; i++) {
       const docRef = doc(
         db,
